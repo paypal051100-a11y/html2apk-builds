@@ -1,185 +1,275 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl"><head><script>(function(){function f(){var b=document.body;if(!b||!b.children.length)return;var H=window.innerHeight||Math.round(screen.height/(window.devicePixelRatio||1));if(H>0&&b.getBoundingClientRect().height<50){document.documentElement.style.height=H+"px";b.style.height=H+"px"}}window.addEventListener("load",function(){f();setTimeout(f,300);setTimeout(f,1200)});window.addEventListener("resize",f)})()</script><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HTML → APK</title>
+<html lang="en" dir="ltr">
+<head><script>(function(){function f(){var b=document.body;if(!b||!b.children.length)return;var H=window.innerHeight||Math.round(screen.height/(window.devicePixelRatio||1));if(H>0&&b.getBoundingClientRect().height<50){document.documentElement.style.height=H+"px";b.style.height=H+"px"}}window.addEventListener("load",function(){f();setTimeout(f,300);setTimeout(f,1200)});window.addEventListener("resize",f)})()</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Calculator</title>
 <style>
-body{margin:0;font-family:system-ui,sans-serif;background:#f4f6fb;color:#222;padding:12px}
-.c{background:#fff;border-radius:16px;padding:16px;margin:0 auto 12px;max-width:560px;box-shadow:0 1px 6px #0001}
-h2{margin:0 0 6px;font-size:17px}
-label{display:block;font-size:13px;color:#555;margin:10px 0 4px}
-label.k{display:flex;align-items:center;gap:10px;font-size:15px;color:#222;margin:0;padding:7px 0}
-.k input{width:20px;height:20px}
-input[type=text],input[type=number],input[type=password],select{width:100%;box-sizing:border-box;padding:11px;border:1px solid #cfd6e4;border-radius:10px;font-size:15px;background:#fff}
-.r{display:flex;gap:8px}.r>div{flex:1}
-button{width:100%;padding:15px;border:0;border-radius:12px;background:#3a84c9;color:#fff;font-size:17px}
-button:disabled{opacity:.5}
-#log{white-space:pre-wrap;font-size:13px;line-height:1.8}
-a.dl{display:block;text-align:center;padding:14px;background:#2e9e5b;color:#fff;border-radius:12px;text-decoration:none;margin-top:10px;font-size:16px}
-small{color:#777}img{width:56px;height:56px;border-radius:12px;vertical-align:middle;margin-inline-start:8px}
-</style></head><body>
-<div class="c"><h2>معلومات التطبيق</h2>
-<label>اسم التطبيق</label><input type="text" id="name" value="My App">
-<label>معرّف الحزمة</label><input type="text" id="pk" value="com.myapp.app" dir="ltr">
-<div class="r"><div><label>اسم الإصدار</label><input type="text" id="vn" value="1.0" dir="ltr"></div>
-<div><label>كود الإصدار</label><input type="number" id="vc" value="1" min="1"></div></div>
-<div class="r"><div><label>الحد الأدنى SDK</label><input type="number" id="mn" value="24" min="24" max="35"></div>
-<div><label>الهدف SDK</label><input type="number" id="tg" value="35" min="24" max="35"></div></div>
-<label>اتجاه الشاشة</label><select id="ori"><option value="unspecified">تلقائي</option><option value="portrait">عمودي</option><option value="landscape">أفقي</option></select>
+:root{--body:#f1f2f7;--panel:#e8e9ef;--photo:#d9dbe3;--key:#ffffff;--op:#e7e7ea;--opt:#1f2024;--tx:#1f2024;--mut:#6f7178;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%;overflow:hidden;background:var(--body)}
+body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:none;background:var(--body);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.calc{position:relative;width:100%;max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column;background:var(--body);padding:14px;color:var(--tx)}
+.display{background:var(--panel);border-radius:22px;padding:12px;flex:0 1 auto;min-height:0;display:flex;flex-direction:column}
+.cap{font-size:13px;color:var(--mut);margin:0 0 0 4px}
+.caprow{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex:none}
+.sbtn{border:0;border-radius:14px;height:30px;padding:0 14px;background:#fff;color:var(--tx);font-size:14px;font-family:inherit;cursor:pointer}
+.sci{display:none;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:10px;flex:none}
+.calc.sci-on .sci{display:grid}
+.sci button{border:0;border-radius:20px;height:40px;padding:0;font-size:15px;background:var(--key);color:var(--tx);font-family:inherit;cursor:pointer}
+.sci button:active{filter:brightness(.92)}
+.sci button.on{background:#ffd9c2}
+.sci sup{font-size:10px;line-height:0}
+.calc.sci-on .photo{max-height:110px}
+.calc.sci-on .photo.has{flex:0 1 120px}
+.calc.sci-on .val{height:80px}
+.photo{position:relative;background:var(--photo);border-radius:16px;flex:1 1 auto;min-height:80px;max-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:12px;overflow:hidden}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:center;will-change:transform;user-select:none;-webkit-user-drag:none;pointer-events:none;display:none}
+.photo.has{flex:0 1 230px;min-height:120px;max-height:none;padding:0;touch-action:none}
+.photo.has #file{inset:auto;top:8px;right:8px;width:110px;height:34px;z-index:3}
+.chg{display:none;position:absolute;top:8px;right:8px;z-index:2;background:rgba(0,0,0,.6);color:#fff;font-size:13px;padding:8px 12px;border-radius:12px;pointer-events:none}
+.photo.has .chg{display:block}
+.hl,.val{touch-action:pan-y}
+.photo svg{width:34px;height:34px;color:#6f7178}
+.photo b{font-size:17px;font-weight:600}
+.photo small{font-size:12px;color:var(--mut)}
+.photo.has img{display:block}.photo.has svg,.photo.has b,.photo.has small{display:none}
+#file{display:block;position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0}
+.expr{height:30px;line-height:30px;flex:none;margin:10px 6px 0;color:var(--mut);font-size:15px;text-align:right;white-space:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.expr::-webkit-scrollbar,.val::-webkit-scrollbar{display:none}
+.expr.tap{color:var(--tx);cursor:pointer;text-decoration:underline dotted}
+.caret{display:inline-block;width:2px;height:.95em;margin:0 -1px;background:#ea8244;vertical-align:-.1em;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.caret{animation:none}}
+.val{font-size:44px;font-weight:600;text-align:right;padding:2px 6px 4px;overflow-wrap:anywhere;height:108px;flex:none;overflow-y:auto;scrollbar-width:none;font-variant-numeric:tabular-nums;line-height:1.15}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(5,minmax(0,1fr));gap:8px;margin-top:12px;flex:1 1 0;min-height:0}
+.keys button{border:0;border-radius:22px;height:100%;min-height:0;font-size:26px;background:var(--key);color:var(--tx);cursor:pointer;font-family:inherit}
+.keys button:active{filter:brightness(1.25)}
+button:focus-visible{outline:3px solid #8fb0ff}
+.keys button.op{background:var(--op);color:var(--opt);font-weight:700}
+.keys button.eq{background:#ea8244;color:#fff;font-weight:700}
+.keys button.fn{font-size:22px;background:#e7e7ea}
+.keys button.hist{font-size:20px}
+.keys button.dot{display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.dot small{font-size:13px;color:var(--mut)}
+.dot span{font-size:32px;font-weight:700}
+.hp{position:absolute;inset:0;background:var(--body);display:none;flex-direction:column;padding:14px;direction:rtl}
+.hp.open{display:flex}
+.hh{display:flex;align-items:center;justify-content:space-between;padding:6px 4px 12px;font-size:22px;font-weight:700}
+.hbtn{border:0;border-radius:14px;height:42px;padding:0 16px;font-size:15px;background:var(--key);color:var(--tx);font-family:inherit;cursor:pointer}
+.hl{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.hi{background:var(--panel);border-radius:16px;padding:12px 14px;cursor:pointer;direction:ltr;text-align:right}
+.hi small{display:block;color:var(--mut);font-size:14px;overflow-wrap:anywhere}
+.hi b{font-size:24px;font-weight:600}
+.he{color:var(--mut);text-align:center;margin-top:40px}
+.hf{padding-top:10px;display:flex}.hf .hbtn{flex:1}
+</style>
+</head>
+<body>
+<main class="calc">
+<section class="display">
+<div class="caprow"><p class="cap">Photo from your gallery</p><button class="sbtn" id="sciBtn">علمية</button></div>
+<div class="photo" id="photo">
+<img id="img" alt="Uploaded photo">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="15.5" cy="8.5" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg>
+<b>Your photo stays visible here</b>
+<small>No need to reopen the gallery. Tap to add one.</small>
+<span class="chg">Change photo</span>
+<input type="file" id="file" accept="image/*" aria-label="Choose a photo">
 </div>
-<div class="c"><h2>المحتوى</h2>
-<label>ملف HTML</label><input type="file" id="f" accept=".html,.htm,text/html"><small id="fn"></small>
-<label>الأيقونة (اختياري، تلقائية من أول حرف)</label><input type="file" id="ic" accept="image/*"><img id="ip" alt="">
+<div class="expr" id="expr"></div>
+<div class="val" id="val">0</div>
+</section>
+<div class="sci" id="sci">
+<button data-k="(">(</button><button data-k=")">)</button><button data-k="MC">MC</button><button data-k="M+">M+</button><button data-k="M-">M−</button><button data-k="MR">MR</button>
+<button data-k="!">x!</button><button data-k="²">x<sup>2</sup></button><button data-k="³">x<sup>3</sup></button><button data-k="^">x<sup>y</sup></button><button data-k="e^(">e<sup>x</sup></button><button data-k="π">π</button>
+<button data-k="⁻¹">1/x</button><button data-k="√(">√</button><button data-k="∛(">∛x</button><button data-k="ʸ√"><sup>y</sup>√x</button><button data-k="Inv">Inv</button><button data-k="Rad">Deg</button>
+<button data-k="e">e</button><button data-k="ln">ln</button><button data-k="lg">lg</button><button data-k="sin">sin</button><button data-k="cos">cos</button><button data-k="tan">tan</button>
 </div>
-<div class="c"><h2>العرض والسلوك</h2><div id="T"></div></div>
-<div class="c"><h2>الأذونات</h2><div id="P"></div></div>
-<div class="c"><h2>البناء</h2>
-<small>البناء يتم على GitHub مجاناً. أنشئ توكن (Classic) من GitHub ← Settings ← Developer settings ← Tokens، وفعّل <b>repo</b> و <b>workflow</b>.</small>
-<label>GitHub Token</label><input type="password" id="tok" dir="ltr">
-<label class="k"><input type="checkbox" id="rem"> تذكر التوكن على هذا الجهاز</label>
-<label>اسم المستودع (يُنشأ تلقائياً، خاص)</label><input type="text" id="repo" value="html2apk-builds" dir="ltr">
-<label class="k"><input type="checkbox" id="pub" checked> مستودع عام (يلزم للتنزيل من داخل أي تطبيق)</label>
-<small>المستودع العام يظهر ملف HTML الخاص بك للجميع. أزل العلامة إذا كان سرياً، وحمّل من Chrome.</small>
-<div style="height:12px"></div><button id="go">🔧 بناء ملف APK</button>
+<div class="keys" id="keys">
+<button class="fn" data-k="AC">AC</button>
+<button class="fn hist" data-k="H">السجل</button>
+<button class="fn" data-k="⌫" aria-label="Backspace">⌫</button>
+<button class="op" data-k="÷">÷</button>
+<button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+<button class="op" data-k="×">×</button>
+<button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+<button class="op" data-k="−">−</button>
+<button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+<button class="op" data-k="+">+</button>
+<button class="fn" data-k="%">%</button><button data-k="0">0</button>
+<button class="dot" data-k="."><small>فاصلة</small><span>.</span></button>
+<button class="eq" data-k="=">=</button>
 </div>
-<div class="c" id="out" style="display:none"><div id="log"></div><div id="res"></div></div>
+<div class="hp" id="hp">
+<div class="hh"><span>السجل</span><button class="hbtn" id="hclose">إغلاق</button></div>
+<div class="hl" id="hl"></div>
+<div class="hf"><button class="hbtn" id="hclear">مسح السجل</button></div>
+</div>
+</main>
 <script>
-const $=id=>document.getElementById(id),v=id=>$(id).value.trim(),ck=id=>$(id).checked,sleep=t=>new Promise(r=>setTimeout(r,t));
-const L=m=>{$('log').textContent+=m+'\n'};
-const T=[['status','إظهار شريط الحالة',1],['bar','إظهار شريط الإجراءات',0],['keep','إبقاء الشاشة قيد التشغيل',0],['cut','إظهار فتحة الكاميرا',0],['desk','وضع سطح المكتب',0],['pull','اسحب للتحديث',0],['nonet','حوار لا يوجد إنترنت',0],['prog','مؤشر التحميل',0],['back','التنقل في السجل بزر الرجوع',1],['exit','تأكيد الخروج',0],['dbg','عرض أخطاء الصفحة على الشاشة (للتشخيص)',0]];
-const P=[['INTERNET','الإنترنت',1],['ACCESS_NETWORK_STATE','حالة الشبكة',1],['VIBRATE','الاهتزاز',0],['CAMERA','الكاميرا',0],['RECORD_AUDIO','الميكروفون',0],['ACCESS_FINE_LOCATION','الموقع',0],['READ_EXTERNAL_STORAGE','قراءة التخزين',0]];
-const row=(id,t,d)=>`<label class="k"><input type="checkbox" id="${id}" ${d?'checked':''}>${t}</label>`;
-$('T').innerHTML=T.map(t=>row(t[0],t[1],t[2])).join('');
-$('P').innerHTML=P.map(p=>row('p_'+p[0],p[1],p[2])).join('');
-try{const t=localStorage.getItem('tok');if(t){$('tok').value=t;$('rem').checked=true}}catch(e){}
-let html='',icon=null;
-$('f').onchange=async e=>{const f=e.target.files[0];if(f){html=await f.text();$('fn').textContent=f.name}};
-$('ic').onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=192;c.getContext('2d').drawImage(im,0,0,192,192);icon=c.toDataURL('image/png').split(',')[1];$('ip').src=c.toDataURL()};im.src=URL.createObjectURL(f)};
-function defIcon(n){const c=document.createElement('canvas');c.width=c.height=192;const x=c.getContext('2d');x.fillStyle='#d9784a';x.fillRect(0,0,192,192);x.fillStyle='#fff';x.font='bold 110px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText([...n][0]||'A',96,100);return c.toDataURL().split(',')[1]}
-function withDbg(h){const s='<script>window.onerror=function(m,u,l,c){var d=document.createElement("div");d.style.cssText="position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#c00;color:#fff;font:12px monospace;padding:8px;direction:ltr;white-space:pre-wrap";d.textContent="JS: "+m+" (line "+l+")";(document.body||document.documentElement).appendChild(d)};window.addEventListener("load",function(){var e=document.body.getBoundingClientRect(),d=document.createElement("div");d.style.cssText="position:fixed;left:0;top:0;z-index:99999;background:#000a;color:#0f0;font:11px monospace;padding:3px;direction:ltr";d.textContent="body "+Math.round(e.width)+"x"+Math.round(e.height)+" win "+innerWidth+"x"+innerHeight;document.documentElement.appendChild(d)})<\/script>';return /<head[^>]*>/i.test(h)?h.replace(/<head[^>]*>/i,m=>m+s):s+h}
-function inj(h,d){const fx='<script>(function(){function f(){var b=document.body;if(!b||!b.children.length)return;var H=window.innerHeight||Math.round(screen.height/(window.devicePixelRatio||1));if(H>0&&b.getBoundingClientRect().height<50){document.documentElement.style.height=H+"px";b.style.height=H+"px"}}window.addEventListener("load",function(){f();setTimeout(f,300);setTimeout(f,1200)});window.addEventListener("resize",f)})()<\/script>';if(d)h=withDbg(h);return /<head[^>]*>/i.test(h)?h.replace(/<head[^>]*>/i,m=>m+fx):fx+h}
-const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-function files(){
-const o={};T.forEach(t=>o[t[0]]=ck(t[0]));
-const n=v('name'),pk=v('pk'),pr=P.filter(p=>ck('p_'+p[0])).map(p=>p[0]);
-const dang=['CAMERA','RECORD_AUDIO','ACCESS_FINE_LOCATION'].filter(x=>pr.includes(x)).map(x=>'Manifest.permission.'+x).join(',');
-const java=`package ${pk};
-import android.app.*;import android.content.*;import android.os.*;import android.view.*;import android.webkit.*;import android.widget.*;import android.Manifest;import android.net.Uri;import android.provider.MediaStore;import android.util.Base64;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-public class MainActivity extends Activity{
-static final boolean PULL=${o.pull},PROG=${o.prog},BACK=${o.back},EXIT=${o.exit};
-WebView w;ProgressBar pb;SwipeRefreshLayout sr;ValueCallback<Uri[]> fc;
-@Override protected void onActivityResult(int rq,int rs,Intent d){if(rq==7&&fc!=null){fc.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(rs,d));fc=null;}else super.onActivityResult(rq,rs,d);}
-@Override protected void onCreate(Bundle b){super.onCreate(b);
-Window win=getWindow();
-${o.status?'':'win.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);'}
-${o.keep?'win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);':''}
-${o.cut?'if(Build.VERSION.SDK_INT>=28){WindowManager.LayoutParams p=win.getAttributes();p.layoutInDisplayCutoutMode=WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;win.setAttributes(p);}':''}
-FrameLayout root=new FrameLayout(this);root.setBackgroundColor(0xFFFFFFFF);
-root.setOnApplyWindowInsetsListener((x,i)->{x.setPadding(i.getSystemWindowInsetLeft(),i.getSystemWindowInsetTop(),i.getSystemWindowInsetRight(),i.getSystemWindowInsetBottom());return i.consumeSystemWindowInsets();});
-w=new WebView(this);WebSettings s=w.getSettings();
-s.setJavaScriptEnabled(true);s.setDomStorageEnabled(true);s.setAllowFileAccess(true);s.setMediaPlaybackRequiresUserGesture(false);
-${o.desk?'s.setUserAgentString("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36");s.setUseWideViewPort(true);s.setLoadWithOverviewMode(true);s.setBuiltInZoomControls(true);s.setDisplayZoomControls(false);':''}
-pb=new ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal);pb.setMax(100);pb.setVisibility(View.GONE);
-sr=new SwipeRefreshLayout(this);sr.setEnabled(PULL);sr.setOnRefreshListener(()->w.reload());sr.setOnChildScrollUpCallback((p,c)->w.getScrollY()>0);sr.addView(w);
-w.setWebViewClient(new WebViewClient(){
-@Override public boolean shouldOverrideUrlLoading(WebView v,WebResourceRequest r){String u=r.getUrl().toString();if(u.startsWith("http")||u.startsWith("file:"))return false;try{startActivity(new Intent(Intent.ACTION_VIEW,r.getUrl()));}catch(Exception e){}return true;}
-@Override public void onPageFinished(WebView v,String u){sr.setRefreshing(false);}
-@Override public void onReceivedError(WebView v,WebResourceRequest r,WebResourceError e){${o.nonet?'if(r.isForMainFrame()&&r.getUrl().getScheme().startsWith("http"))new AlertDialog.Builder(MainActivity.this).setMessage("لا يوجد اتصال بالإنترنت").setPositiveButton("إعادة المحاولة",(d,k)->v.reload()).setNegativeButton("إغلاق",null).show();':''}}
-});
-w.setWebChromeClient(new WebChromeClient(){
-@Override public void onProgressChanged(WebView v,int p){pb.setProgress(p);pb.setVisibility(PROG&&p<100?View.VISIBLE:View.GONE);}
-@Override public void onPermissionRequest(PermissionRequest r){runOnUiThread(()->r.grant(r.getResources()));}
-@Override public void onGeolocationPermissionsShowPrompt(String og,GeolocationPermissions.Callback c){c.invoke(og,true,false);}
-@Override public boolean onShowFileChooser(WebView v,ValueCallback<Uri[]> cb,FileChooserParams fp){if(fc!=null)fc.onReceiveValue(null);fc=cb;try{startActivityForResult(fp.createIntent(),7);}catch(Exception e){fc=null;t("تعذر فتح المعرض");return false;}return true;}
-});
-w.addJavascriptInterface(this,"Android");
-w.setDownloadListener((u,ua,cd,mt,ln)->{String fn=URLUtil.guessFileName(u,cd,mt).replace("'","");
-if(u.startsWith("blob:"))w.evaluateJavascript("fetch('"+u+"').then(function(r){return r.blob()}).then(function(bl){var f=new FileReader();f.onload=function(){Android.save(f.result,'"+fn+"')};f.readAsDataURL(bl)})",null);
-else if(u.startsWith("data:"))save(u,fn);
-else{DownloadManager.Request q=new DownloadManager.Request(Uri.parse(u));q.setMimeType(mt);String ck=CookieManager.getInstance().getCookie(u);if(ck!=null)q.addRequestHeader("cookie",ck);q.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);q.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,fn);((DownloadManager)getSystemService(DOWNLOAD_SERVICE)).enqueue(q);t("بدأ التنزيل");}});
-root.addView(sr,new FrameLayout.LayoutParams(-1,-1));root.addView(pb,new FrameLayout.LayoutParams(-1,12));
-setContentView(root);
-java.util.ArrayList<String> ps=new java.util.ArrayList<>(java.util.Arrays.asList(new String[]{${dang}}));
-if(Build.VERSION.SDK_INT<29)ps.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-if(Build.VERSION.SDK_INT>=23&&!ps.isEmpty())requestPermissions(ps.toArray(new String[0]),1);
-w.post(()->w.loadUrl("file:///android_asset/index.html"));}
-void t(String s){runOnUiThread(()->Toast.makeText(this,s,Toast.LENGTH_SHORT).show());}
-@JavascriptInterface public void save(String d,String n){try{int i=d.indexOf(',');String m=d.substring(5,d.indexOf(';'));byte[] by=Base64.decode(d.substring(i+1),0);java.io.OutputStream o;
-if(Build.VERSION.SDK_INT>=29){ContentValues v=new ContentValues();v.put(MediaStore.MediaColumns.DISPLAY_NAME,n);v.put(MediaStore.MediaColumns.MIME_TYPE,m);v.put(MediaStore.MediaColumns.RELATIVE_PATH,Environment.DIRECTORY_DOWNLOADS);o=getContentResolver().openOutputStream(getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI,v));}
-else o=new java.io.FileOutputStream(new java.io.File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),n));
-o.write(by);o.close();t("تم الحفظ في التنزيلات");}catch(Exception e){t("فشل الحفظ");}}
-@Override public void onBackPressed(){
-if(BACK&&w.canGoBack())w.goBack();
-else if(EXIT)new AlertDialog.Builder(this).setMessage("هل تريد الخروج؟").setPositiveButton("نعم",(d,k)->finish()).setNegativeButton("لا",null).show();
-else super.onBackPressed();}
-}`;
-const manifest=`<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-${pr.map(p=>'<uses-permission android:name="android.permission.'+p+'"/>').join('\n')}
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/>
-<application android:label="${esc(n)}" android:icon="@mipmap/ic_launcher" android:theme="@android:style/Theme.Material.Light.${o.bar?'DarkActionBar':'NoActionBar'}" android:usesCleartextTraffic="true" android:enableOnBackInvokedCallback="false">
-<activity android:name=".MainActivity" android:exported="true" android:screenOrientation="${v('ori')}" android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout|density|uiMode">
-<intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
-</activity></application></manifest>`;
-const appg=`plugins { id 'com.android.application' }
-android {
-  namespace '${pk}'
-  compileSdk 35
-  defaultConfig { applicationId '${pk}'; minSdk ${v('mn')}; targetSdk ${v('tg')}; versionCode ${v('vc')}; versionName '${v('vn')}' }
-  compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
-}
-tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
-dependencies { implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0' }`;
-const wf=['name: Build APK','on: [push, workflow_dispatch]','permissions:','  contents: write','jobs:','  build:','    runs-on: ubuntu-latest','    steps:','      - uses: actions/checkout@v4','      - uses: actions/setup-java@v4','        with:','          distribution: temurin','          java-version: 17','      - uses: gradle/actions/setup-gradle@v4','        with:','          gradle-version: 8.9','      - run: gradle assembleDebug --no-daemon','      - run: gh release create "v${{ github.run_number }}" app/build/outputs/apk/debug/app-debug.apk --title "APK ${{ github.run_number }}" --notes build','        env:','          GH_TOKEN: ${{ github.token }}',''].join('\n');
-return [
-['settings.gradle',`pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }\ndependencyResolutionManagement { repositories { google(); mavenCentral() } }\nrootProject.name = 'app'\ninclude ':app'`],
-['build.gradle',`plugins { id 'com.android.application' version '8.7.3' apply false }`],
-['gradle.properties',`android.useAndroidX=true\norg.gradle.jvmargs=-Xmx2g`],
-['app/build.gradle',appg],
-['app/src/main/AndroidManifest.xml',manifest],
-['app/src/main/java/'+pk.replace(/\./g,'/')+'/MainActivity.java',java],
-['app/src/main/assets/index.html',inj(html,o.dbg)],
-['app/src/main/res/mipmap-xxxhdpi/ic_launcher.png',icon||defIcon(n),1],
-['.github/workflows/build.yml',wf]];}
-let tok='';
-async function gh(p,m,b){const r=await fetch('https://api.github.com'+p,{method:m||'GET',headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:b?JSON.stringify(b):undefined});
-if(r.status===404)return null;if(!r.ok)throw new Error(r.status+' '+(await r.text()).slice(0,180));return r.json()}
-$('go').onclick=async()=>{
-const pk=v('pk');tok=v('tok');
-if(!v('name'))return alert('اكتب اسم التطبيق');
-if(!/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(pk))return alert('معرّف الحزمة غير صحيح، مثال: com.myapp.app');
-if(!html)return alert('اختر ملف HTML');
-if(!tok)return alert('ألصق GitHub Token');
-try{ck('rem')?localStorage.setItem('tok',tok):localStorage.removeItem('tok')}catch(e){}
-$('go').disabled=true;$('out').style.display='block';$('log').textContent='';$('res').innerHTML='';
-try{
-const me=await gh('/user');if(!me)throw new Error('التوكن غير صحيح');
-const rn=v('repo')||'html2apk-builds',R=me.login+'/'+rn;
-let rp=await gh('/repos/'+R);
-if(!rp){L('إنشاء المستودع…');rp=await gh('/user/repos','POST',{name:rn,private:!ck('pub'),auto_init:true})}
-else if(ck('pub')&&rp.private){L('جعل المستودع عاماً…');try{await gh('/repos/'+R,'PATCH',{private:false});rp.private=false}catch(e){L('تعذر جعله عاماً، سأستخدم التنزيل الخاص')}}
-const br=rp.default_branch;let ref=null;
-for(let i=0;i<10&&!ref;i++){ref=await gh(`/repos/${R}/git/ref/heads/${br}`);if(!ref)await sleep(1500)}
-if(!ref)throw new Error('تعذر قراءة الفرع');
-L('رفع الملفات…');const tree=[];
-for(const f of files()){const b=await gh(`/repos/${R}/git/blobs`,'POST',{content:f[1],encoding:f[2]?'base64':'utf-8'});tree.push({path:f[0],mode:'100644',type:'blob',sha:b.sha})}
-const t=await gh(`/repos/${R}/git/trees`,'POST',{tree});
-const c=await gh(`/repos/${R}/git/commits`,'POST',{message:'build',tree:t.sha,parents:[ref.object.sha]});
-await gh(`/repos/${R}/git/refs/heads/${br}`,'PATCH',{sha:c.sha,force:true});
-L('بدأ البناء، يستغرق عدة دقائق…');
-let run=null,last='';
-for(let i=0;i<160;i++){await sleep(5000);const d=await gh(`/repos/${R}/actions/runs?head_sha=${c.sha}`);run=d&&d.workflow_runs[0];
-if(run){if(run.status!==last){last=run.status;L('الحالة: '+run.status)}if(run.status==='completed')break}}
-if(!run||run.status!=='completed')throw new Error('انتهى الوقت، راجع تبويب Actions في GitHub');
-if(run.conclusion!=='success'){$('res').innerHTML=`<a class="dl" style="background:#c0392b" href="${run.html_url}" target="_blank">فشل البناء، افتح السجل</a>`;throw new Error('فشل البناء: '+run.conclusion)}
-let rel=null;for(let i=0;i<10&&!rel;i++){rel=await gh(`/repos/${R}/releases/tags/v${run.run_number}`);if(!rel)await sleep(2000)}
-if(!rel||!rel.assets.length)throw new Error('لم أجد ملف APK في Releases');
-L('✅ تم البناء');
-const as=rel.assets[0];
-if(!rp.private)$('res').innerHTML=`<a class="dl" href="${as.browser_download_url}">⬇️ تحميل APK</a>`;
-else{
-$('res').innerHTML=`<a class="dl" id="dl">جاري تجهيز الملف…</a><small><a href="${as.browser_download_url}">رابط بديل (يحتاج تسجيل دخول GitHub)</a></small>`;
-try{const r=await fetch(`https://api.github.com/repos/${R}/releases/assets/${as.id}`,{headers:{Authorization:'Bearer '+tok,Accept:'application/octet-stream'}});if(!r.ok)throw 0;const a=$('dl');a.href=URL.createObjectURL(await r.blob());a.download='app.apk';a.textContent='⬇️ تحميل APK'}catch(e){$('dl').textContent='تعذر التجهيز، استخدم الرابط البديل'}
-}
-}catch(e){L('❌ '+e.message)}
-$('go').disabled=false};
-</script></body></html>
+var exp="",tail="",done=false,hist=[],inv=false,rad=false,mem=0,sciOn=false,lastE="";
+var valEl=document.getElementById("val"),exprEl=document.getElementById("expr"),hp=document.getElementById("hp"),hl=document.getElementById("hl");
+try{hist=JSON.parse(localStorage.getItem("calc_hist")||"[]")}catch(e){hist=[]}
+function saveH(){try{localStorage.setItem("calc_hist",JSON.stringify(hist.slice(0,100)))}catch(e){}}
+function commas(s){return s.replace(/\d+(\.\d*)?/g,function(n){var p=n.split(".");p[0]=p[0].replace(/\B(?=(\d{3})+(?!\d))/g,",");return p.join(".")})}
+function isOp(c){return"+−×÷^".indexOf(c)>=0}
+var TOK=/^(?:\d+\.?\d*|\.\d+|sin⁻¹\(|cos⁻¹\(|tan⁻¹\(|sin\(|cos\(|tan\(|ln\(|lg\(|√\(|∛\(|ʸ√|⁻¹|[πe²³!%+−×÷^()])/;
+function lex(s){var t=[],m;while(s.length){m=TOK.exec(s);if(!m)throw 0;t.push(m[0]);s=s.slice(m[0].length)}return t}
+function fmtR(r){if(!isFinite(r))throw 0;r=parseFloat(r.toPrecision(12));if(r===0)r=0;var s=String(r);if(/e/.test(s)){var m=s.split("e");s=m[0]+"×10^("+m[1].replace("-","−").replace("+","")+")"}return s}
+function calcNum(s){
+while(s.length>1&&isOp(s[s.length-1]))s=s.slice(0,-1);
+if(/ʸ√$/.test(s))s=s.slice(0,-2);
+var t=lex(s),p=0;
+function peek(){return t[p]}
+function next(){return t[p++]}
+function isFn(x){return x.length>1&&x[x.length-1]==="("}
+function startsAtom(x){return x!==undefined&&(/^[\d.πe(]/.test(x)||isFn(x))}
+function trig(f,x){var v=f(rad?x:x*Math.PI/180);return Math.abs(v)<1e-12?0:v}
+function itrig(f,x){var v=f(x);return rad?v:v*180/Math.PI}
+function fact(n){if(n<0||n!==Math.floor(n)||n>170)throw 0;var r=1;for(var i=2;i<=n;i++)r*=i;return r}
+function rt(x,y){if(y===0)throw 0;if(x<0){if(y%2!==0&&y===Math.floor(y))return-Math.pow(-x,1/y);throw 0}return Math.pow(x,1/y)}
+function fn(x,v){var c;switch(x){
+case"sin(":return trig(Math.sin,v);case"cos(":return trig(Math.cos,v);
+case"tan(":c=trig(Math.cos,v);if(c===0)throw 0;return trig(Math.sin,v)/c;
+case"sin⁻¹(":if(Math.abs(v)>1)throw 0;return itrig(Math.asin,v);
+case"cos⁻¹(":if(Math.abs(v)>1)throw 0;return itrig(Math.acos,v);
+case"tan⁻¹(":return itrig(Math.atan,v);
+case"ln(":if(v<=0)throw 0;return Math.log(v);
+case"lg(":if(v<=0)throw 0;return Math.log10(v);
+case"√(":if(v<0)throw 0;return Math.sqrt(v);
+case"∛(":return Math.cbrt(v)}throw 0}
+function atom(){var x=next(),v;if(x===undefined)throw 0;
+if(/^[\d.]/.test(x))return parseFloat(x);
+if(x==="π")return Math.PI;if(x==="e")return Math.E;
+if(x==="("){v=expr();if(peek()===")")next();return v}
+if(isFn(x)){v=expr();if(peek()===")")next();return fn(x,v)}
+throw 0}
+function post(){var v=atom(),o;while((o=peek())==="!"||o==="²"||o==="³"||o==="⁻¹"||o==="%"){next();v=o==="!"?fact(v):o==="²"?v*v:o==="³"?v*v*v:o==="%"?v/100:1/v}return v}
+function sgn(){if(peek()==="−"){next();return-sgn()}return power()}
+function power(){var v=post(),o=peek();if(o==="^"){next();v=Math.pow(v,sgn())}else if(o==="ʸ√"){next();v=rt(sgn(),v)}return v}
+function unary(){var o=peek();if(o==="−"){next();return-unary()}if(o==="+"){next();return unary()}return power()}
+function term(){var v=unary(),o,r;for(;;){o=peek();
+if(o==="×"||o==="÷"){next();r=unary();if(o==="÷"){if(r===0)throw 0;v/=r}else v*=r}
+else if(startsAtom(o)){v*=unary()}else break}return v}
+function expr(){var v=term(),o;while((o=peek())==="+"||o==="−"){next();var r=term();v=o==="+"?v+r:v-r}return v}
+var r=expr();if(p<t.length)throw 0;return r}
+function evaluate(s){try{return fmtR(calcNum(s))}catch(e){return"Error"}}
+function show(){
+var full=exp+tail,t=full===""?"0":commas(full);
+render(full);
+var L=t.length;valEl.style.fontSize=L<=9?"44px":L<=14?"34px":L<=22?"27px":"21px";
+valEl.scrollTop=valEl.scrollHeight;exprEl.scrollLeft=exprEl.scrollWidth;exprEl.classList.toggle("tap",done&&lastE!=="")}
+var UNIT=/sin⁻¹\(|cos⁻¹\(|tan⁻¹\(|sin\(|cos\(|tan\(|ln\(|lg\(|√\(|∛\(|ʸ√|⁻¹|[\s\S]/g;
+function mkCaret(){var c=document.createElement("span");c.className="caret";return c}
+function render(full){
+valEl.textContent="";
+if(full===""){valEl.textContent="0";return}
+var com={},re=/\d+/g,m,u,L,j;
+while((m=re.exec(full))){if(m.index>0&&full[m.index-1]===".")continue;L=m[0].length;for(j=1;j<L;j++)if((L-j)%3===0)com[m.index+j]=1}
+var frag=document.createDocumentFragment(),at=done?-1:exp.length;
+UNIT.lastIndex=0;
+while((u=UNIT.exec(full))){var s=u.index;
+if(com[s]){var c=document.createElement("span");c.textContent=",";frag.appendChild(c)}
+if(s===at)frag.appendChild(mkCaret());
+var sp=document.createElement("span");sp.className="u";sp.dataset.i=s;sp.dataset.l=u[0].length;sp.textContent=u[0];frag.appendChild(sp)}
+if(at===full.length)frag.appendChild(mkCaret());
+valEl.appendChild(frag);
+var cr=valEl.querySelector(".caret");
+if(cr){var a=cr.getBoundingClientRect(),b=valEl.getBoundingClientRect();if(a.bottom>b.bottom)valEl.scrollTop+=a.bottom-b.bottom;else if(a.top<b.top)valEl.scrollTop-=b.top-a.top}}
+function setCaret(i){var f=exp+tail;exp=f.slice(0,i);tail=f.slice(i);show()}
+function lastNum(){var m=exp.match(/(\d*\.?\d*)$/);return m?m[1]:""}
+var SCI=["(",")","MC","M+","M-","MR","!","²","³","^","e^(","π","⁻¹","√(","∛(","ʸ√","Inv","Rad","e","ln","lg","sin","cos","tan"];
+var BACK=/(sin⁻¹\(|cos⁻¹\(|tan⁻¹\(|sin\(|cos\(|tan\(|ln\(|lg\(|√\(|∛\(|ʸ√|⁻¹|.)$/;
+function endsVal(){return /[\d.)πe!²³¹]$/.test(exp)&&!/\($/.test(exp)}
+function fresh(){if(done){exp="";done=false;exprEl.textContent=""}}
+function cont(){if(done){done=false;exprEl.textContent=""}}
+function ins(x){if(/[\d.]$/.test(exp)&&/^[\d.]/.test(x))exp+="×";exp+=x}
+function q(k){return document.querySelector('[data-k="'+k+'"]')}
+function lab(){
+q("Inv").classList.toggle("on",inv);
+q("Rad").textContent=rad?"Rad":"Deg";
+q("sin").innerHTML=inv?"sin<sup>−1</sup>":"sin";
+q("cos").innerHTML=inv?"cos<sup>−1</sup>":"cos";
+q("tan").innerHTML=inv?"tan<sup>−1</sup>":"tan";
+q("lg").innerHTML=inv?"10<sup>x</sup>":"lg";
+q("MR").classList.toggle("on",mem!==0)}
+function setSci(on){sciOn=on;document.querySelector(".calc").classList.toggle("sci-on",on);document.getElementById("sciBtn").textContent=on?"عادية":"علمية";try{localStorage.setItem("calc_sci",on?"1":"0")}catch(e){}}
+function sci(k){
+if(k==="Inv"){inv=!inv;lab();return}
+if(k==="Rad"){rad=!rad;lab();return}
+if(k==="MC"){mem=0;lab();return}
+if(k==="M+"||k==="M-"){var ff=exp+tail;if(ff==="")return;try{var v=calcNum(ff);mem+=(k==="M+"?1:-1)*v;if(Math.abs(mem)<1e-12)mem=0}catch(e){}lab();return}
+if(k==="MR"){fresh();var mv=fmtR(mem);ins(mem<0?"("+mv+")":mv);return}
+var pre={"(":"(","√(":"√(","∛(":"∛(","π":"π","e":"e","ln":"ln(","lg":inv?"10^(":"lg(","sin":inv?"sin⁻¹(":"sin(","cos":inv?"cos⁻¹(":"cos(","tan":inv?"tan⁻¹(":"tan(","e^(":"e^("};
+if(pre[k]!==undefined){fresh();ins(pre[k]);return}
+if(k===")"){cont();var o=(exp.match(/\(/g)||[]).length,c=(exp.match(/\)/g)||[]).length;if(o>c&&endsVal())exp+=")";return}
+if(endsVal()){cont();exp+=k}}
+function press(k){
+if(k==="H"){openH();return}
+if(done&&exp==="Error"&&k!=="AC"){exp="";done=false}
+if(SCI.indexOf(k)>=0){sci(k);show();return}
+if(/^\d$/.test(k)){if(done){exp="";done=false;exprEl.textContent=""}
+ if(lastNum()==="0")exp=exp.slice(0,-1);
+ if(lastNum().replace(/\D/g,"").length<15)exp+=k}
+else if(k==="."){if(done){exp="";done=false;exprEl.textContent=""}
+ var ln=lastNum();if(ln.indexOf(".")<0)exp+=(ln===""?"0.":".")}
+else if(k==="AC"){exp="";tail="";done=false;exprEl.textContent=""}
+else if(k==="⌫"){if(done){exp="";done=false;exprEl.textContent=""}else exp=exp.replace(BACK,"")}
+else if(k==="%"){var n=lastNum();if(n!==""){try{var v=fmtR(parseFloat(n)/100);exp=exp.slice(0,exp.length-n.length)+v;done=false}catch(e){}}}
+else if(k==="="){exp+=tail;tail="";if(exp!==""&&!done){var r=evaluate(exp);lastE=exp;exprEl.textContent=commas(exp)+" =";
+ if(r!=="Error"){hist.unshift({e:exp,r:r});saveH()}
+ exp=r;done=true}}
+else{done=false;exprEl.textContent="";var lc=exp[exp.length-1];
+ if(exp===""){exp=(k==="−")?"−":"0"+k}
+ else if(lc==="("){if(k==="−")exp+="−"}
+ else if(/ʸ√$/.test(exp)){if(k==="−")exp+="−"}
+ else if(isOp(lc)){if(exp!=="−")exp=exp.slice(0,-1)+k}
+ else exp+=k}
+show()}
+function openH(){
+hl.innerHTML="";
+if(!hist.length){var d=document.createElement("div");d.className="he";d.textContent="لا يوجد سجل بعد";hl.appendChild(d)}
+hist.forEach(function(h){var d=document.createElement("div");d.className="hi";
+var s=document.createElement("small");s.textContent=commas(h.e)+" =";var b=document.createElement("b");b.textContent=commas(h.r);
+d.appendChild(s);d.appendChild(b);
+d.addEventListener("click",function(){exp=h.r;tail="";done=true;lastE=h.e;exprEl.textContent=commas(h.e)+" =";show();closeH()});
+hl.appendChild(d)});
+hp.classList.add("open")}
+function closeH(){hp.classList.remove("open")}
+document.getElementById("hclose").addEventListener("click",closeH);
+document.getElementById("hclear").addEventListener("click",function(){hist=[];saveH();openH()});
+["keys","sci"].forEach(function(id){document.getElementById(id).addEventListener("click",function(e){var b=e.target.closest("button");if(b)press(b.dataset.k)})});
+document.getElementById("sciBtn").addEventListener("click",function(){setSci(!sciOn)});
+exprEl.addEventListener("click",function(){if(done&&lastE!==""){exp=lastE;tail="";done=false;exprEl.textContent="";show()}});
+valEl.addEventListener("click",function(e){if(done)return;var us=valEl.querySelectorAll(".u");if(!us.length)return;
+var x=e.clientX,y=e.clientY,best=null,br=null,bd=1e9,i,r,d;
+for(i=0;i<us.length;i++){r=us[i].getBoundingClientRect();d=Math.max(r.top-y,0,y-r.bottom)*4+Math.max(r.left-x,0,x-r.right);if(d<bd){bd=d;best=us[i];br=r}}
+setCaret(+best.dataset.i+(x<(br.left+br.right)/2?0:+best.dataset.l))});
+document.addEventListener("keydown",function(e){
+if(e.key==="Escape"&&hp.classList.contains("open")){closeH();return}
+var m={"*":"×","/":"÷","-":"−","Enter":"=","Backspace":"⌫","Escape":"AC"},k=m[e.key]||e.key;
+if(/^[\d.+%=()^!]$/.test(k)||["×","÷","−","⌫","AC"].indexOf(k)>=0){e.preventDefault();press(k)}});
+document.getElementById("file").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;
+var r=new FileReader();r.onload=function(){document.getElementById("img").src=r.result;document.getElementById("photo").classList.add("has")};r.readAsDataURL(f)});
+(function(){
+var ph=document.getElementById("photo"),im=document.getElementById("img"),s=1,tx=0,ty=0,pts={},pd=0,pm=null,lastTap=0,moved=false;
+function apply(){im.style.transform="translate("+tx+"px,"+ty+"px) scale("+s+")"}
+function clamp(){var r=ph.getBoundingClientRect(),mx=(s-1)*r.width/2,my=(s-1)*r.height/2;tx=Math.max(-mx,Math.min(mx,tx));ty=Math.max(-my,Math.min(my,ty));if(s<=1){tx=0;ty=0}}
+function mid(){var a=Object.keys(pts).map(function(k){return pts[k]});return{x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2,d:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1}}
+function rel(x,y){var r=ph.getBoundingClientRect();return{x:x-(r.left+r.width/2),y:y-(r.top+r.height/2)}}
+im.addEventListener("load",function(){s=1;tx=0;ty=0;apply()});
+ph.addEventListener("pointerdown",function(e){if(!ph.classList.contains("has")||e.target.id==="file")return;try{ph.setPointerCapture(e.pointerId)}catch(_){}pts[e.pointerId]={x:e.clientX,y:e.clientY};moved=false;if(Object.keys(pts).length===2){var m=mid();pd=m.d;pm={x:m.x,y:m.y}}});
+ph.addEventListener("pointermove",function(e){var p=pts[e.pointerId];if(!p)return;var n=Object.keys(pts).length;
+if(n===2){p.x=e.clientX;p.y=e.clientY;var m=mid(),ns=Math.max(1,Math.min(6,s*m.d/pd)),c=rel(m.x,m.y);tx=c.x-(c.x-tx)*(ns/s)+(m.x-pm.x);ty=c.y-(c.y-ty)*(ns/s)+(m.y-pm.y);s=ns;pd=m.d;pm={x:m.x,y:m.y};clamp();apply();moved=true}
+else if(n===1){var dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;if(s>1){tx+=dx;ty+=dy;clamp();apply()}if(Math.abs(dx)+Math.abs(dy)>3)moved=true}});
+function up(e){if(!pts[e.pointerId])return;var wasOne=Object.keys(pts).length===1;delete pts[e.pointerId];
+if(wasOne&&!moved&&e.type==="pointerup"){var t=Date.now();if(t-lastTap<300){lastTap=0;if(s>1){s=1;tx=0;ty=0}else{var c=rel(e.clientX,e.clientY);s=2.5;tx=-1.5*c.x;ty=-1.5*c.y;clamp()}apply()}else lastTap=t}}
+ph.addEventListener("pointerup",up);ph.addEventListener("pointercancel",up);
+})();
+try{setSci(localStorage.getItem("calc_sci")==="1")}catch(e){setSci(false)}
+lab();show();
+</script>
+</body>
+</html>
