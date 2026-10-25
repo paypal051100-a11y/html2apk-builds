@@ -1,5 +1,5 @@
 package com.myapp.app;
-import android.app.*;import android.content.*;import android.os.*;import android.view.*;import android.webkit.*;import android.widget.*;import android.Manifest;
+import android.app.*;import android.content.*;import android.os.*;import android.view.*;import android.webkit.*;import android.widget.*;import android.Manifest;import android.net.Uri;import android.provider.MediaStore;import android.util.Base64;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class MainActivity extends Activity{
 static final boolean PULL=false,PROG=false,BACK=true,EXIT=false;
@@ -26,11 +26,22 @@ w.setWebChromeClient(new WebChromeClient(){
 @Override public void onPermissionRequest(PermissionRequest r){runOnUiThread(()->r.grant(r.getResources()));}
 @Override public void onGeolocationPermissionsShowPrompt(String og,GeolocationPermissions.Callback c){c.invoke(og,true,false);}
 });
+w.addJavascriptInterface(this,"Android");
+w.setDownloadListener((u,ua,cd,mt,ln)->{String fn=URLUtil.guessFileName(u,cd,mt).replace("'","");
+if(u.startsWith("blob:"))w.evaluateJavascript("fetch('"+u+"').then(function(r){return r.blob()}).then(function(bl){var f=new FileReader();f.onload=function(){Android.save(f.result,'"+fn+"')};f.readAsDataURL(bl)})",null);
+else if(u.startsWith("data:"))save(u,fn);
+else{DownloadManager.Request q=new DownloadManager.Request(Uri.parse(u));q.setMimeType(mt);String ck=CookieManager.getInstance().getCookie(u);if(ck!=null)q.addRequestHeader("cookie",ck);q.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);q.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,fn);((DownloadManager)getSystemService(DOWNLOAD_SERVICE)).enqueue(q);t("بدأ التنزيل");}});
 root.addView(sr,new FrameLayout.LayoutParams(-1,-1));root.addView(pb,new FrameLayout.LayoutParams(-1,12));
 setContentView(root);
-String[] ps=new String[]{};
-if(Build.VERSION.SDK_INT>=23&&ps.length>0)requestPermissions(ps,1);
+java.util.ArrayList<String> ps=new java.util.ArrayList<>(java.util.Arrays.asList(new String[]{}));
+if(Build.VERSION.SDK_INT<29)ps.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+if(Build.VERSION.SDK_INT>=23&&!ps.isEmpty())requestPermissions(ps.toArray(new String[0]),1);
 w.loadUrl("file:///android_asset/index.html");}
+void t(String s){runOnUiThread(()->Toast.makeText(this,s,Toast.LENGTH_SHORT).show());}
+@JavascriptInterface public void save(String d,String n){try{int i=d.indexOf(',');String m=d.substring(5,d.indexOf(';'));byte[] by=Base64.decode(d.substring(i+1),0);java.io.OutputStream o;
+if(Build.VERSION.SDK_INT>=29){ContentValues v=new ContentValues();v.put(MediaStore.MediaColumns.DISPLAY_NAME,n);v.put(MediaStore.MediaColumns.MIME_TYPE,m);v.put(MediaStore.MediaColumns.RELATIVE_PATH,Environment.DIRECTORY_DOWNLOADS);o=getContentResolver().openOutputStream(getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI,v));}
+else o=new java.io.FileOutputStream(new java.io.File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),n));
+o.write(by);o.close();t("تم الحفظ في التنزيلات");}catch(Exception e){t("فشل الحفظ");}}
 @Override public void onBackPressed(){
 if(BACK&&w.canGoBack())w.goBack();
 else if(EXIT)new AlertDialog.Builder(this).setMessage("هل تريد الخروج؟").setPositiveButton("نعم",(d,k)->finish()).setNegativeButton("لا",null).show();
