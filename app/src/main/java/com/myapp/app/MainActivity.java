@@ -1,4 +1,4 @@
-package com.myawpp.app;
+package com.myapp.app;
 import android.app.*;import android.content.*;import android.os.*;import android.view.*;import android.webkit.*;import android.widget.*;import android.Manifest;import android.net.Uri;import android.provider.MediaStore;import android.util.Base64;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class MainActivity extends Activity{
@@ -10,7 +10,7 @@ Window win=getWindow();
 
 
 FrameLayout root=new FrameLayout(this);root.setBackgroundColor(0xFFFFFFFF);
-root.setOnApplyWindowInsetsListener((x,i)->{x.setPadding(i.getSystemWindowInsetLeft(),i.getSystemWindowInsetTop(),i.getSystemWindowInsetRight(),i.getSystemWindowInsetBottom());return i;});
+root.setOnApplyWindowInsetsListener((x,i)->{x.setPadding(i.getSystemWindowInsetLeft(),i.getSystemWindowInsetTop(),i.getSystemWindowInsetRight(),i.getSystemWindowInsetBottom());return i.consumeSystemWindowInsets();});
 w=new WebView(this);WebSettings s=w.getSettings();
 s.setJavaScriptEnabled(true);s.setDomStorageEnabled(true);s.setAllowFileAccess(true);s.setMediaPlaybackRequiresUserGesture(false);
 
@@ -36,7 +36,7 @@ setContentView(root);
 java.util.ArrayList<String> ps=new java.util.ArrayList<>(java.util.Arrays.asList(new String[]{}));
 if(Build.VERSION.SDK_INT<29)ps.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 if(Build.VERSION.SDK_INT>=23&&!ps.isEmpty())requestPermissions(ps.toArray(new String[0]),1);
-w.loadUrl("file:///android_asset/index.html");}
+w.post(()->w.loadUrl("file:///android_asset/index.html"));}
 void t(String s){runOnUiThread(()->Toast.makeText(this,s,Toast.LENGTH_SHORT).show());}
 @JavascriptInterface public void save(String d,String n){try{int i=d.indexOf(',');String m=d.substring(5,d.indexOf(';'));byte[] by=Base64.decode(d.substring(i+1),0);java.io.OutputStream o;
 if(Build.VERSION.SDK_INT>=29){ContentValues v=new ContentValues();v.put(MediaStore.MediaColumns.DISPLAY_NAME,n);v.put(MediaStore.MediaColumns.MIME_TYPE,m);v.put(MediaStore.MediaColumns.RELATIVE_PATH,Environment.DIRECTORY_DOWNLOADS);o=getContentResolver().openOutputStream(getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI,v));}
