@@ -27,7 +27,7 @@ body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:
 .photo{position:relative;background:var(--photo);border-radius:16px;flex:1 1 auto;min-height:80px;max-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:12px;overflow:hidden}
 .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:center;will-change:transform;user-select:none;-webkit-user-drag:none;pointer-events:none;display:none}
 .photo.has{flex:0 1 230px;min-height:120px;max-height:none;padding:0;touch-action:none}
-.photo.has #file{inset:auto;top:8px;right:8px;width:110px;height:34px;z-index:3}
+.photo .chg{cursor:pointer}
 .chg{display:none;position:absolute;top:8px;right:8px;z-index:2;background:rgba(0,0,0,.6);color:#fff;font-size:13px;padding:8px 12px;border-radius:12px;pointer-events:none}
 .photo.has .chg{display:block}
 .hl,.val{touch-action:pan-y}
@@ -35,7 +35,7 @@ body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:
 .photo b{font-size:17px;font-weight:600}
 .photo small{font-size:12px;color:var(--mut)}
 .photo.has img{display:block}.photo.has svg,.photo.has b,.photo.has small{display:none}
-#file{display:block;position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0}
+
 .expr{height:30px;line-height:30px;flex:none;margin:10px 6px 0;color:var(--mut);font-size:15px;text-align:right;white-space:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
 .expr::-webkit-scrollbar,.val::-webkit-scrollbar{display:none}
 .expr.tap{color:var(--tx);cursor:pointer;text-decoration:underline dotted}
@@ -76,7 +76,7 @@ button:focus-visible{outline:3px solid #8fb0ff}
 <b>Your photo stays visible here</b>
 <small>No need to reopen the gallery. Tap to add one.</small>
 <span class="chg">Change photo</span>
-<input type="file" id="file" accept="image/*" aria-label="Choose a photo">
+<input type="file" id="file" accept="image/*" aria-label="Choose a photo" style="position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0">
 </div>
 <div class="expr" id="expr"></div>
 <div class="val" id="val">0</div>
@@ -251,8 +251,15 @@ document.addEventListener("keydown",function(e){
 if(e.key==="Escape"&&hp.classList.contains("open")){closeH();return}
 var m={"*":"×","/":"÷","-":"−","Enter":"=","Backspace":"⌫","Escape":"AC"},k=m[e.key]||e.key;
 if(/^[\d.+%=()^!]$/.test(k)||["×","÷","−","⌫","AC"].indexOf(k)>=0){e.preventDefault();press(k)}});
+(function(){var ph=document.getElementById("photo"),fi=document.getElementById("file"),dx=0,dy=0,t0=0;
+ph.addEventListener("pointerdown",function(e){dx=e.clientX;dy=e.clientY;t0=Date.now()});
+ph.addEventListener("click",function(e){
+var has=ph.classList.contains("has"),c=ph.querySelector(".chg").getBoundingClientRect(),onBtn=e.clientX>=c.left&&e.clientX<=c.right&&e.clientY>=c.top&&e.clientY<=c.bottom;
+if(has&&!onBtn)return;
+if(Math.abs(e.clientX-dx)>10||Math.abs(e.clientY-dy)>10)return;
+try{fi.click()}catch(_){}});})();
 document.getElementById("file").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;
-var r=new FileReader();r.onload=function(){document.getElementById("img").src=r.result;document.getElementById("photo").classList.add("has")};r.readAsDataURL(f)});
+var r=new FileReader();r.onload=function(){document.getElementById("img").src=r.result;document.getElementById("photo").classList.add("has")};r.readAsDataURL(f);e.target.value=""});
 (function(){
 var ph=document.getElementById("photo"),im=document.getElementById("img"),s=1,tx=0,ty=0,pts={},pd=0,pm=null,lastTap=0,moved=false;
 function apply(){im.style.transform="translate("+tx+"px,"+ty+"px) scale("+s+")"}
