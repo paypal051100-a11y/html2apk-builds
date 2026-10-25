@@ -1,8 +1,8 @@
 plugins { id 'com.android.application' }
 android {
-  namespace 'com.myapp.app'
+  namespace 'com.myahpp.app'
   compileSdk 35
-  defaultConfig { applicationId 'com.myapp.app'; minSdk 24; targetSdk 35; versionCode 1; versionName '1.0' }
+  defaultConfig { applicationId 'com.myahpp.app'; minSdk 24; targetSdk 35; versionCode 1; versionName '1.0' }
   compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
 }
 tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
