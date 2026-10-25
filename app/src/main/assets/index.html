@@ -1,114 +1,275 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#202124">
-<title>حاسبة الوزن</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Calculator</title>
 <style>
-:root{--bg:#17181b;--panel:#2b2d31;--key:#393c40;--blue:#d7e3ff;--blueText:#173b78;--text:#f7f7f8;--muted:#b9bbc2}
-*{box-sizing:border-box}body{margin:0;background:#f0f1f3;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--text);display:flex;justify-content:center;min-height:100vh;padding:10px}
-.app{width:min(100%,480px);background:linear-gradient(#26272a,#1c1d20);border-radius:30px;padding:22px 18px 24px;box-shadow:0 10px 35px #0002;align-self:flex-start}
-header{display:flex;justify-content:space-between;align-items:center;margin:0 5px 20px;font-size:28px;font-weight:750}
-header span{font-size:25px}
-.display{background:#2d2f33;border-radius:24px;padding:16px;margin-bottom:16px}
-.caption{color:var(--muted);font-size:14px;margin:0 0 10px}
-.preview{height:150px;border-radius:16px;background:#44464b;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;text-align:center;color:#ddd}
-.preview img{width:100%;height:100%;object-fit:contain;display:none;background:#222}
-.placeholder{padding:12px}.placeholder .ico{font-size:35px;display:block;margin-bottom:8px}
-.placeholder strong{display:block;font-size:17px;font-weight:600}.placeholder small{display:block;color:#c6c7cc;margin-top:6px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
-.action{border:0;border-radius:13px;padding:12px 8px;font-size:15px;font-weight:700;background:var(--blue);color:var(--blueText);cursor:pointer}
-.action.secondary{background:#414348;color:white}.action:active,.key:active{filter:brightness(.9);transform:scale(.99)}
-.reading{display:flex;align-items:baseline;gap:8px;margin-top:15px;direction:ltr;justify-content:flex-end}
-#result{font-size:clamp(42px,12vw,62px);font-weight:750;line-height:1.2;min-width:0;width:100%;background:transparent;border:0;color:white;outline:none;text-align:left}
-.unit{font-size:16px;color:#d1d2d7}
-.status{font-size:12px;color:#bfc1c8;margin-top:4px;min-height:18px}
-.keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;direction:ltr}
-.key{height:64px;border:0;border-radius:20px;background:var(--key);color:white;font-size:27px;font-weight:650;cursor:pointer}
-.key.op,.key.equal{background:var(--blue);color:var(--blueText)}
-.key.small{font-size:22px}
-.note{color:#b9bbc2;font-size:12px;text-align:center;margin:17px 0 0}
-input[type=file]{display:none}
-@media(max-width:360px){.app{padding:17px 12px}.key{height:57px;border-radius:16px}.preview{height:130px}}
+:root{--body:#f1f2f7;--panel:#e8e9ef;--photo:#d9dbe3;--key:#ffffff;--op:#e7e7ea;--opt:#1f2024;--tx:#1f2024;--mut:#6f7178;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%;overflow:hidden;background:var(--body)}
+body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:none;background:var(--body);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.calc{position:relative;width:100%;max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column;background:var(--body);padding:14px;color:var(--tx)}
+.display{background:var(--panel);border-radius:22px;padding:12px;flex:0 1 auto;min-height:0;display:flex;flex-direction:column}
+.cap{font-size:13px;color:var(--mut);margin:0 0 0 4px}
+.caprow{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex:none}
+.sbtn{border:0;border-radius:14px;height:30px;padding:0 14px;background:#fff;color:var(--tx);font-size:14px;font-family:inherit;cursor:pointer}
+.sci{display:none;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:10px;flex:none}
+.calc.sci-on .sci{display:grid}
+.sci button{border:0;border-radius:20px;height:40px;padding:0;font-size:15px;background:var(--key);color:var(--tx);font-family:inherit;cursor:pointer}
+.sci button:active{filter:brightness(.92)}
+.sci button.on{background:#ffd9c2}
+.sci sup{font-size:10px;line-height:0}
+.calc.sci-on .photo{max-height:110px}
+.calc.sci-on .photo.has{flex:0 1 120px}
+.calc.sci-on .val{height:80px}
+.photo{position:relative;background:var(--photo);border-radius:16px;flex:1 1 auto;min-height:80px;max-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:12px;overflow:hidden}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:center;will-change:transform;user-select:none;-webkit-user-drag:none;pointer-events:none;display:none}
+.photo.has{flex:0 1 230px;min-height:120px;max-height:none;padding:0;touch-action:none}
+.photo.has #file{inset:auto;top:8px;right:8px;width:110px;height:34px;z-index:3}
+.chg{display:none;position:absolute;top:8px;right:8px;z-index:2;background:rgba(0,0,0,.6);color:#fff;font-size:13px;padding:8px 12px;border-radius:12px;pointer-events:none}
+.photo.has .chg{display:block}
+.hl,.val{touch-action:pan-y}
+.photo svg{width:34px;height:34px;color:#6f7178}
+.photo b{font-size:17px;font-weight:600}
+.photo small{font-size:12px;color:var(--mut)}
+.photo.has img{display:block}.photo.has svg,.photo.has b,.photo.has small{display:none}
+#file{display:block;position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0}
+.expr{height:30px;line-height:30px;flex:none;margin:10px 6px 0;color:var(--mut);font-size:15px;text-align:right;white-space:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.expr::-webkit-scrollbar,.val::-webkit-scrollbar{display:none}
+.expr.tap{color:var(--tx);cursor:pointer;text-decoration:underline dotted}
+.caret{display:inline-block;width:2px;height:.95em;margin:0 -1px;background:#ea8244;vertical-align:-.1em;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.caret{animation:none}}
+.val{font-size:44px;font-weight:600;text-align:right;padding:2px 6px 4px;overflow-wrap:anywhere;height:108px;flex:none;overflow-y:auto;scrollbar-width:none;font-variant-numeric:tabular-nums;line-height:1.15}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(5,minmax(0,1fr));gap:8px;margin-top:12px;flex:1 1 0;min-height:0}
+.keys button{border:0;border-radius:22px;height:100%;min-height:0;font-size:26px;background:var(--key);color:var(--tx);cursor:pointer;font-family:inherit}
+.keys button:active{filter:brightness(1.25)}
+button:focus-visible{outline:3px solid #8fb0ff}
+.keys button.op{background:var(--op);color:var(--opt);font-weight:700}
+.keys button.eq{background:#ea8244;color:#fff;font-weight:700}
+.keys button.fn{font-size:22px;background:#e7e7ea}
+.keys button.hist{font-size:20px}
+.keys button.dot{display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.dot small{font-size:13px;color:var(--mut)}
+.dot span{font-size:32px;font-weight:700}
+.hp{position:absolute;inset:0;background:var(--body);display:none;flex-direction:column;padding:14px;direction:rtl}
+.hp.open{display:flex}
+.hh{display:flex;align-items:center;justify-content:space-between;padding:6px 4px 12px;font-size:22px;font-weight:700}
+.hbtn{border:0;border-radius:14px;height:42px;padding:0 16px;font-size:15px;background:var(--key);color:var(--tx);font-family:inherit;cursor:pointer}
+.hl{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.hi{background:var(--panel);border-radius:16px;padding:12px 14px;cursor:pointer;direction:ltr;text-align:right}
+.hi small{display:block;color:var(--mut);font-size:14px;overflow-wrap:anywhere}
+.hi b{font-size:24px;font-weight:600}
+.he{color:var(--mut);text-align:center;margin-top:40px}
+.hf{padding-top:10px;display:flex}.hf .hbtn{flex:1}
 </style>
 </head>
 <body>
-<main class="app">
-<header><span aria-hidden="true">▦</span><div>حاسبة الوزن</div></header>
+<main class="calc">
 <section class="display">
-<p class="caption">الصورة المرفوعة من المعرض</p>
-<div class="preview">
-<img id="photo" alt="الصورة المختارة">
-<div class="placeholder" id="placeholder"><span class="ico">▧</span><strong>اختاري صورة يظهر فيها الوزن</strong><small>يمكنك رفع صورة أو فتح الكاميرا مباشرة</small></div>
+<div class="caprow"><p class="cap">Photo from your gallery</p><button class="sbtn" id="sciBtn">علمية</button></div>
+<div class="photo" id="photo">
+<img id="img" alt="Uploaded photo">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="15.5" cy="8.5" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg>
+<b>Your photo stays visible here</b>
+<small>No need to reopen the gallery. Tap to add one.</small>
+<span class="chg">Change photo</span>
+<input type="file" id="file" accept="image/*" aria-label="Choose a photo">
 </div>
-<div class="actions">
-<button class="action" id="galleryBtn">تحميل صورة</button>
-<button class="action secondary" id="cameraBtn">📷 تصوير الوزن</button>
+<div class="expr" id="expr"></div>
+<div class="val" id="val">0</div>
+</section>
+<div class="sci" id="sci">
+<button data-k="(">(</button><button data-k=")">)</button><button data-k="MC">MC</button><button data-k="M+">M+</button><button data-k="M-">M−</button><button data-k="MR">MR</button>
+<button data-k="!">x!</button><button data-k="²">x<sup>2</sup></button><button data-k="³">x<sup>3</sup></button><button data-k="^">x<sup>y</sup></button><button data-k="e^(">e<sup>x</sup></button><button data-k="π">π</button>
+<button data-k="⁻¹">1/x</button><button data-k="√(">√</button><button data-k="∛(">∛x</button><button data-k="ʸ√"><sup>y</sup>√x</button><button data-k="Inv">Inv</button><button data-k="Rad">Deg</button>
+<button data-k="e">e</button><button data-k="ln">ln</button><button data-k="lg">lg</button><button data-k="sin">sin</button><button data-k="cos">cos</button><button data-k="tan">tan</button>
 </div>
-<input id="gallery" type="file" accept="image/*">
-<input id="camera" type="file" accept="image/*" capture="environment">
-<div class="reading"><input id="result" inputmode="decimal" aria-label="الوزن" value="0" autocomplete="off"><span class="unit">كغم</span></div>
-<div class="status" id="status">أدخلي الوزن يدويًا أو حاولي قراءته من الصورة.</div>
-</section>
-<section class="keypad" aria-label="لوحة الحاسبة">
-<button class="key op" data-action="divide">÷</button>
-<button class="key" data-action="percent">%</button>
-<button class="key small" data-action="back">⌫</button>
-<button class="key small" data-action="clear">AC</button>
-<button class="key" data-num="7">7</button><button class="key" data-num="8">8</button><button class="key" data-num="9">9</button><button class="key op" data-action="multiply">×</button>
-<button class="key" data-num="4">4</button><button class="key" data-num="5">5</button><button class="key" data-num="6">6</button><button class="key op" data-action="subtract">−</button>
-<button class="key" data-num="1">1</button><button class="key" data-num="2">2</button><button class="key" data-num="3">3</button><button class="key op" data-action="add">+</button>
-<button class="key op" data-action="sign">±</button><button class="key" data-num="0">0</button><button class="key" data-action="dot">.</button><button class="key equal" data-action="equals">=</button>
-</section>
-<p class="note">ترتيب الأرقام إنجليزي مثل الحاسبة العادية • يمكنك تعديل الوزن بعد إدخاله</p>
+<div class="keys" id="keys">
+<button class="fn" data-k="AC">AC</button>
+<button class="fn hist" data-k="H">السجل</button>
+<button class="fn" data-k="⌫" aria-label="Backspace">⌫</button>
+<button class="op" data-k="÷">÷</button>
+<button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+<button class="op" data-k="×">×</button>
+<button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+<button class="op" data-k="−">−</button>
+<button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+<button class="op" data-k="+">+</button>
+<button class="fn" data-k="%">%</button><button data-k="0">0</button>
+<button class="dot" data-k="."><small>فاصلة</small><span>.</span></button>
+<button class="eq" data-k="=">=</button>
+</div>
+<div class="hp" id="hp">
+<div class="hh"><span>السجل</span><button class="hbtn" id="hclose">إغلاق</button></div>
+<div class="hl" id="hl"></div>
+<div class="hf"><button class="hbtn" id="hclear">مسح السجل</button></div>
+</div>
 </main>
 <script>
-const result=document.getElementById('result'),statusEl=document.getElementById('status');
-const gallery=document.getElementById('gallery'),camera=document.getElementById('camera'),photo=document.getElementById('photo'),placeholder=document.getElementById('placeholder');
-let stored=0, pending=null, fresh=true;
-function current(){const n=parseFloat(result.value.replace(/,/g,''));return Number.isFinite(n)?n:0}
-function show(n){result.value=String(Number.isFinite(n)?Number(n.toFixed(8)):0)}
-document.getElementById('galleryBtn').onclick=()=>gallery.click();
-document.getElementById('cameraBtn').onclick=()=>camera.click();
-function handleFile(file){
- if(!file)return;
- const url=URL.createObjectURL(file);photo.src=url;photo.style.display='block';placeholder.style.display='none';
- statusEl.textContent='تم تحميل الصورة. جارٍ محاولة قراءة الرقم الظاهر...';
- // OCR is optional and loaded from the internet only when an image is selected.
- const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
- script.onload=async()=>{
-  try{
-   statusEl.textContent='جارٍ قراءة النص من الصورة...';
-   const worker=await Tesseract.createWorker('eng');
-   const {data}=await worker.recognize(file);await worker.terminate();
-   const matches=(data.text||'').replace(/,/g,'.').match(/\d+(?:\.\d{1,3})?/g);
-   if(matches&&matches.length){
-    const nums=matches.map(Number).filter(Number.isFinite);
-    const best=nums.sort((a,b)=>b-a)[0];
-    show(best);statusEl.textContent='قراءة مبدئية من الصورة: '+best+' كغم. راجعي الرقم وعدّليه إذا لزم.';
-   }else statusEl.textContent='لم أتمكن من تمييز رقم الوزن. اكتبيه من لوحة الأرقام.';
-  }catch(e){statusEl.textContent='تعذرت القراءة التلقائية؛ اكتبي الوزن يدويًا من لوحة الأرقام.'}
- };
- script.onerror=()=>statusEl.textContent='ميزة القراءة التلقائية تحتاج اتصال إنترنت. يمكنك إدخال الوزن يدويًا.';
- document.head.appendChild(script);
-}
-gallery.onchange=e=>handleFile(e.target.files[0]);camera.onchange=e=>handleFile(e.target.files[0]);
-document.querySelectorAll('.key').forEach(btn=>btn.addEventListener('click',()=>{
- const num=btn.dataset.num, action=btn.dataset.action;
- if(num!==undefined){if(fresh||result.value==='0'){result.value=num;fresh=false}else result.value+=num;return}
- switch(action){
- case 'clear':show(0);stored=0;pending=null;fresh=true;statusEl.textContent='تم مسح الحاسبة.';break;
- case 'back':result.value=result.value.length>1?result.value.slice(0,-1):'0';fresh=false;break;
- case 'dot':if(fresh){result.value='0.';fresh=false}else if(!result.value.includes('.'))result.value+='.';break;
- case 'sign':show(-current());break;
- case 'percent':show(current()/100);break;
- case 'add':case 'subtract':case 'multiply':case 'divide':stored=current();pending=action;fresh=true;break;
- case 'equals':
-  if(pending){const b=current();let out=stored;if(pending==='add')out=stored+b;if(pending==='subtract')out=stored-b;if(pending==='multiply')out=stored*b;if(pending==='divide')out=b===0?NaN:stored/b;show(out);pending=null;fresh=true;statusEl.textContent=Number.isFinite(out)?'الناتج جاهز.':'لا يمكن القسمة على صفر.'}
-  break;
- }
-}));
-result.addEventListener('input',()=>{fresh=false});
+var exp="",tail="",done=false,hist=[],inv=false,rad=false,mem=0,sciOn=false,lastE="";
+var valEl=document.getElementById("val"),exprEl=document.getElementById("expr"),hp=document.getElementById("hp"),hl=document.getElementById("hl");
+try{hist=JSON.parse(localStorage.getItem("calc_hist")||"[]")}catch(e){hist=[]}
+function saveH(){try{localStorage.setItem("calc_hist",JSON.stringify(hist.slice(0,100)))}catch(e){}}
+function commas(s){return s.replace(/\d+(\.\d*)?/g,function(n){var p=n.split(".");p[0]=p[0].replace(/\B(?=(\d{3})+(?!\d))/g,",");return p.join(".")})}
+function isOp(c){return"+−×÷^".indexOf(c)>=0}
+var TOK=/^(?:\d+\.?\d*|\.\d+|sin⁻¹\(|cos⁻¹\(|tan⁻¹\(|sin\(|cos\(|tan\(|ln\(|lg\(|√\(|∛\(|ʸ√|⁻¹|[πe²³!%+−×÷^()])/;
+function lex(s){var t=[],m;while(s.length){m=TOK.exec(s);if(!m)throw 0;t.push(m[0]);s=s.slice(m[0].length)}return t}
+function fmtR(r){if(!isFinite(r))throw 0;r=parseFloat(r.toPrecision(12));if(r===0)r=0;var s=String(r);if(/e/.test(s)){var m=s.split("e");s=m[0]+"×10^("+m[1].replace("-","−").replace("+","")+")"}return s}
+function calcNum(s){
+while(s.length>1&&isOp(s[s.length-1]))s=s.slice(0,-1);
+if(/ʸ√$/.test(s))s=s.slice(0,-2);
+var t=lex(s),p=0;
+function peek(){return t[p]}
+function next(){return t[p++]}
+function isFn(x){return x.length>1&&x[x.length-1]==="("}
+function startsAtom(x){return x!==undefined&&(/^[\d.πe(]/.test(x)||isFn(x))}
+function trig(f,x){var v=f(rad?x:x*Math.PI/180);return Math.abs(v)<1e-12?0:v}
+function itrig(f,x){var v=f(x);return rad?v:v*180/Math.PI}
+function fact(n){if(n<0||n!==Math.floor(n)||n>170)throw 0;var r=1;for(var i=2;i<=n;i++)r*=i;return r}
+function rt(x,y){if(y===0)throw 0;if(x<0){if(y%2!==0&&y===Math.floor(y))return-Math.pow(-x,1/y);throw 0}return Math.pow(x,1/y)}
+function fn(x,v){var c;switch(x){
+case"sin(":return trig(Math.sin,v);case"cos(":return trig(Math.cos,v);
+case"tan(":c=trig(Math.cos,v);if(c===0)throw 0;return trig(Math.sin,v)/c;
+case"sin⁻¹(":if(Math.abs(v)>1)throw 0;return itrig(Math.asin,v);
+case"cos⁻¹(":if(Math.abs(v)>1)throw 0;return itrig(Math.acos,v);
+case"tan⁻¹(":return itrig(Math.atan,v);
+case"ln(":if(v<=0)throw 0;return Math.log(v);
+case"lg(":if(v<=0)throw 0;return Math.log10(v);
+case"√(":if(v<0)throw 0;return Math.sqrt(v);
+case"∛(":return Math.cbrt(v)}throw 0}
+function atom(){var x=next(),v;if(x===undefined)throw 0;
+if(/^[\d.]/.test(x))return parseFloat(x);
+if(x==="π")return Math.PI;if(x==="e")return Math.E;
+if(x==="("){v=expr();if(peek()===")")next();return v}
+if(isFn(x)){v=expr();if(peek()===")")next();return fn(x,v)}
+throw 0}
+function post(){var v=atom(),o;while((o=peek())==="!"||o==="²"||o==="³"||o==="⁻¹"||o==="%"){next();v=o==="!"?fact(v):o==="²"?v*v:o==="³"?v*v*v:o==="%"?v/100:1/v}return v}
+function sgn(){if(peek()==="−"){next();return-sgn()}return power()}
+function power(){var v=post(),o=peek();if(o==="^"){next();v=Math.pow(v,sgn())}else if(o==="ʸ√"){next();v=rt(sgn(),v)}return v}
+function unary(){var o=peek();if(o==="−"){next();return-unary()}if(o==="+"){next();return unary()}return power()}
+function term(){var v=unary(),o,r;for(;;){o=peek();
+if(o==="×"||o==="÷"){next();r=unary();if(o==="÷"){if(r===0)throw 0;v/=r}else v*=r}
+else if(startsAtom(o)){v*=unary()}else break}return v}
+function expr(){var v=term(),o;while((o=peek())==="+"||o==="−"){next();var r=term();v=o==="+"?v+r:v-r}return v}
+var r=expr();if(p<t.length)throw 0;return r}
+function evaluate(s){try{return fmtR(calcNum(s))}catch(e){return"Error"}}
+function show(){
+var full=exp+tail,t=full===""?"0":commas(full);
+render(full);
+var L=t.length;valEl.style.fontSize=L<=9?"44px":L<=14?"34px":L<=22?"27px":"21px";
+valEl.scrollTop=valEl.scrollHeight;exprEl.scrollLeft=exprEl.scrollWidth;exprEl.classList.toggle("tap",done&&lastE!=="")}
+var UNIT=/sin⁻¹\(|cos⁻¹\(|tan⁻¹\(|sin\(|cos\(|tan\(|ln\(|lg\(|√\(|∛\(|ʸ√|⁻¹|[\s\S]/g;
+function mkCaret(){var c=document.createElement("span");c.className="caret";return c}
+function render(full){
+valEl.textContent="";
+if(full===""){valEl.textContent="0";return}
+var com={},re=/\d+/g,m,u,L,j;
+while((m=re.exec(full))){if(m.index>0&&full[m.index-1]===".")continue;L=m[0].length;for(j=1;j<L;j++)if((L-j)%3===0)com[m.index+j]=1}
+var frag=document.createDocumentFragment(),at=done?-1:exp.length;
+UNIT.lastIndex=0;
+while((u=UNIT.exec(full))){var s=u.index;
+if(com[s]){var c=document.createElement("span");c.textContent=",";frag.appendChild(c)}
+if(s===at)frag.appendChild(mkCaret());
+var sp=document.createElement("span");sp.className="u";sp.dataset.i=s;sp.dataset.l=u[0].length;sp.textContent=u[0];frag.appendChild(sp)}
+if(at===full.length)frag.appendChild(mkCaret());
+valEl.appendChild(frag);
+var cr=valEl.querySelector(".caret");
+if(cr){var a=cr.getBoundingClientRect(),b=valEl.getBoundingClientRect();if(a.bottom>b.bottom)valEl.scrollTop+=a.bottom-b.bottom;else if(a.top<b.top)valEl.scrollTop-=b.top-a.top}}
+function setCaret(i){var f=exp+tail;exp=f.slice(0,i);tail=f.slice(i);show()}
+function lastNum(){var m=exp.match(/(\d*\.?\d*)$/);return m?m[1]:""}
+var SCI=["(",")","MC","M+","M-","MR","!","²","³","^","e^(","π","⁻¹","√(","∛(","ʸ√","Inv","Rad","e","ln","lg","sin","cos","tan"];
+var BACK=/(sin⁻¹\(|cos⁻¹\(|tan⁻¹\(|sin\(|cos\(|tan\(|ln\(|lg\(|√\(|∛\(|ʸ√|⁻¹|.)$/;
+function endsVal(){return /[\d.)πe!²³¹]$/.test(exp)&&!/\($/.test(exp)}
+function fresh(){if(done){exp="";done=false;exprEl.textContent=""}}
+function cont(){if(done){done=false;exprEl.textContent=""}}
+function ins(x){if(/[\d.]$/.test(exp)&&/^[\d.]/.test(x))exp+="×";exp+=x}
+function q(k){return document.querySelector('[data-k="'+k+'"]')}
+function lab(){
+q("Inv").classList.toggle("on",inv);
+q("Rad").textContent=rad?"Rad":"Deg";
+q("sin").innerHTML=inv?"sin<sup>−1</sup>":"sin";
+q("cos").innerHTML=inv?"cos<sup>−1</sup>":"cos";
+q("tan").innerHTML=inv?"tan<sup>−1</sup>":"tan";
+q("lg").innerHTML=inv?"10<sup>x</sup>":"lg";
+q("MR").classList.toggle("on",mem!==0)}
+function setSci(on){sciOn=on;document.querySelector(".calc").classList.toggle("sci-on",on);document.getElementById("sciBtn").textContent=on?"عادية":"علمية";try{localStorage.setItem("calc_sci",on?"1":"0")}catch(e){}}
+function sci(k){
+if(k==="Inv"){inv=!inv;lab();return}
+if(k==="Rad"){rad=!rad;lab();return}
+if(k==="MC"){mem=0;lab();return}
+if(k==="M+"||k==="M-"){var ff=exp+tail;if(ff==="")return;try{var v=calcNum(ff);mem+=(k==="M+"?1:-1)*v;if(Math.abs(mem)<1e-12)mem=0}catch(e){}lab();return}
+if(k==="MR"){fresh();var mv=fmtR(mem);ins(mem<0?"("+mv+")":mv);return}
+var pre={"(":"(","√(":"√(","∛(":"∛(","π":"π","e":"e","ln":"ln(","lg":inv?"10^(":"lg(","sin":inv?"sin⁻¹(":"sin(","cos":inv?"cos⁻¹(":"cos(","tan":inv?"tan⁻¹(":"tan(","e^(":"e^("};
+if(pre[k]!==undefined){fresh();ins(pre[k]);return}
+if(k===")"){cont();var o=(exp.match(/\(/g)||[]).length,c=(exp.match(/\)/g)||[]).length;if(o>c&&endsVal())exp+=")";return}
+if(endsVal()){cont();exp+=k}}
+function press(k){
+if(k==="H"){openH();return}
+if(done&&exp==="Error"&&k!=="AC"){exp="";done=false}
+if(SCI.indexOf(k)>=0){sci(k);show();return}
+if(/^\d$/.test(k)){if(done){exp="";done=false;exprEl.textContent=""}
+ if(lastNum()==="0")exp=exp.slice(0,-1);
+ if(lastNum().replace(/\D/g,"").length<15)exp+=k}
+else if(k==="."){if(done){exp="";done=false;exprEl.textContent=""}
+ var ln=lastNum();if(ln.indexOf(".")<0)exp+=(ln===""?"0.":".")}
+else if(k==="AC"){exp="";tail="";done=false;exprEl.textContent=""}
+else if(k==="⌫"){if(done){exp="";done=false;exprEl.textContent=""}else exp=exp.replace(BACK,"")}
+else if(k==="%"){var n=lastNum();if(n!==""){try{var v=fmtR(parseFloat(n)/100);exp=exp.slice(0,exp.length-n.length)+v;done=false}catch(e){}}}
+else if(k==="="){exp+=tail;tail="";if(exp!==""&&!done){var r=evaluate(exp);lastE=exp;exprEl.textContent=commas(exp)+" =";
+ if(r!=="Error"){hist.unshift({e:exp,r:r});saveH()}
+ exp=r;done=true}}
+else{done=false;exprEl.textContent="";var lc=exp[exp.length-1];
+ if(exp===""){exp=(k==="−")?"−":"0"+k}
+ else if(lc==="("){if(k==="−")exp+="−"}
+ else if(/ʸ√$/.test(exp)){if(k==="−")exp+="−"}
+ else if(isOp(lc)){if(exp!=="−")exp=exp.slice(0,-1)+k}
+ else exp+=k}
+show()}
+function openH(){
+hl.innerHTML="";
+if(!hist.length){var d=document.createElement("div");d.className="he";d.textContent="لا يوجد سجل بعد";hl.appendChild(d)}
+hist.forEach(function(h){var d=document.createElement("div");d.className="hi";
+var s=document.createElement("small");s.textContent=commas(h.e)+" =";var b=document.createElement("b");b.textContent=commas(h.r);
+d.appendChild(s);d.appendChild(b);
+d.addEventListener("click",function(){exp=h.r;tail="";done=true;lastE=h.e;exprEl.textContent=commas(h.e)+" =";show();closeH()});
+hl.appendChild(d)});
+hp.classList.add("open")}
+function closeH(){hp.classList.remove("open")}
+document.getElementById("hclose").addEventListener("click",closeH);
+document.getElementById("hclear").addEventListener("click",function(){hist=[];saveH();openH()});
+["keys","sci"].forEach(function(id){document.getElementById(id).addEventListener("click",function(e){var b=e.target.closest("button");if(b)press(b.dataset.k)})});
+document.getElementById("sciBtn").addEventListener("click",function(){setSci(!sciOn)});
+exprEl.addEventListener("click",function(){if(done&&lastE!==""){exp=lastE;tail="";done=false;exprEl.textContent="";show()}});
+valEl.addEventListener("click",function(e){if(done)return;var us=valEl.querySelectorAll(".u");if(!us.length)return;
+var x=e.clientX,y=e.clientY,best=null,br=null,bd=1e9,i,r,d;
+for(i=0;i<us.length;i++){r=us[i].getBoundingClientRect();d=Math.max(r.top-y,0,y-r.bottom)*4+Math.max(r.left-x,0,x-r.right);if(d<bd){bd=d;best=us[i];br=r}}
+setCaret(+best.dataset.i+(x<(br.left+br.right)/2?0:+best.dataset.l))});
+document.addEventListener("keydown",function(e){
+if(e.key==="Escape"&&hp.classList.contains("open")){closeH();return}
+var m={"*":"×","/":"÷","-":"−","Enter":"=","Backspace":"⌫","Escape":"AC"},k=m[e.key]||e.key;
+if(/^[\d.+%=()^!]$/.test(k)||["×","÷","−","⌫","AC"].indexOf(k)>=0){e.preventDefault();press(k)}});
+document.getElementById("file").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;
+var r=new FileReader();r.onload=function(){document.getElementById("img").src=r.result;document.getElementById("photo").classList.add("has")};r.readAsDataURL(f)});
+(function(){
+var ph=document.getElementById("photo"),im=document.getElementById("img"),s=1,tx=0,ty=0,pts={},pd=0,pm=null,lastTap=0,moved=false;
+function apply(){im.style.transform="translate("+tx+"px,"+ty+"px) scale("+s+")"}
+function clamp(){var r=ph.getBoundingClientRect(),mx=(s-1)*r.width/2,my=(s-1)*r.height/2;tx=Math.max(-mx,Math.min(mx,tx));ty=Math.max(-my,Math.min(my,ty));if(s<=1){tx=0;ty=0}}
+function mid(){var a=Object.keys(pts).map(function(k){return pts[k]});return{x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2,d:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1}}
+function rel(x,y){var r=ph.getBoundingClientRect();return{x:x-(r.left+r.width/2),y:y-(r.top+r.height/2)}}
+im.addEventListener("load",function(){s=1;tx=0;ty=0;apply()});
+ph.addEventListener("pointerdown",function(e){if(!ph.classList.contains("has")||e.target.id==="file")return;try{ph.setPointerCapture(e.pointerId)}catch(_){}pts[e.pointerId]={x:e.clientX,y:e.clientY};moved=false;if(Object.keys(pts).length===2){var m=mid();pd=m.d;pm={x:m.x,y:m.y}}});
+ph.addEventListener("pointermove",function(e){var p=pts[e.pointerId];if(!p)return;var n=Object.keys(pts).length;
+if(n===2){p.x=e.clientX;p.y=e.clientY;var m=mid(),ns=Math.max(1,Math.min(6,s*m.d/pd)),c=rel(m.x,m.y);tx=c.x-(c.x-tx)*(ns/s)+(m.x-pm.x);ty=c.y-(c.y-ty)*(ns/s)+(m.y-pm.y);s=ns;pd=m.d;pm={x:m.x,y:m.y};clamp();apply();moved=true}
+else if(n===1){var dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;if(s>1){tx+=dx;ty+=dy;clamp();apply()}if(Math.abs(dx)+Math.abs(dy)>3)moved=true}});
+function up(e){if(!pts[e.pointerId])return;var wasOne=Object.keys(pts).length===1;delete pts[e.pointerId];
+if(wasOne&&!moved&&e.type==="pointerup"){var t=Date.now();if(t-lastTap<300){lastTap=0;if(s>1){s=1;tx=0;ty=0}else{var c=rel(e.clientX,e.clientY);s=2.5;tx=-1.5*c.x;ty=-1.5*c.y;clamp()}apply()}else lastTap=t}}
+ph.addEventListener("pointerup",up);ph.addEventListener("pointercancel",up);
+})();
+try{setSci(localStorage.getItem("calc_sci")==="1")}catch(e){setSci(false)}
+lab();show();
 </script>
-</body></html>
+</body>
+</html>
