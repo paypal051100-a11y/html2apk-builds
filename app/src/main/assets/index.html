@@ -36,7 +36,7 @@ td.sgn{width:52px}
 <input id="name" placeholder="ادخل اسم الزبون" value="بلال" aria-label="اسم الزبون">
 <div class="wrap">
 <table>
-<thead><tr><th>الصنف</th><th>الثمن (₪)</th><th>التاريخ والوقت</th><th>±</th></tr></thead>
+<thead><tr><th>الصنف</th><th>الثمن (₪)</th><th>التاريخ والوقت</th></tr></thead>
 <tbody id="rows"></tbody>
 </table>
 </div>
@@ -59,9 +59,9 @@ var el=document.getElementById('total');el.textContent='الإجمالي: '+t+' 
 function addRow(r){
  var tr=document.createElement('tr');
  tr.innerHTML='<td><input type="text" aria-label="الصنف"></td>'+
- '<td class="price"><input type="number" inputmode="decimal" step="any" aria-label="الثمن"></td>'+
- '<td class="time"></td><td class="sgn"><button class="sg" aria-label="تبديل موجب/سالب">±</button></td>';
- var it=tr.querySelector('input[type=text]'),pr=tr.querySelector('input[type=number]'),tm=tr.querySelector('.time'),sg=tr.querySelector('.sg');
+ '<td class="price"><input type="number" step="any" aria-label="الثمن"></td>'+
+ '<td class="time"></td>';
+ var it=tr.querySelector('input[type=text]'),pr=tr.querySelector('input[type=number]'),tm=tr.querySelector('.time');
  it.value=r.item;pr.value=r.price;tm.innerHTML=fmt(r.ts);
  it.oninput=function(){r.item=it.value;save()};
  pr.oninput=function(){
@@ -69,7 +69,6 @@ function addRow(r){
   if(filled(r)&&!r.ts){r.ts=Date.now();tm.innerHTML=fmt(r.ts)}
   if(!filled(r)){r.ts=null;tm.innerHTML=''}
   ensureSpare();total();save()};
- sg.onclick=function(){var v=parseFloat(pr.value);if(isNaN(v))return;pr.value=String(-v);pr.oninput()};
  tb.appendChild(tr)}
 function ensureSpare(){if(filled(rows[rows.length-1])){var r={item:'',price:'',ts:null};rows.push(r);addRow(r)}}
 document.getElementById('add').onclick=function(){var r={item:'',price:'',ts:null};rows.push(r);addRow(r);save()};

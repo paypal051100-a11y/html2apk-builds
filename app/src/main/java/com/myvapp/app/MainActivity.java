@@ -1,4 +1,4 @@
-package com.mypp.app;
+package com.myvapp.app;
 import android.app.*;import android.content.*;import android.os.*;import android.view.*;import android.webkit.*;import android.widget.*;import android.Manifest;import android.net.Uri;import android.provider.MediaStore;import android.util.Base64;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class MainActivity extends Activity{
