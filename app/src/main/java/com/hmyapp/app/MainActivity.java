@@ -1,8 +1,8 @@
-package com.myahhpp.app;
+package com.hmyapp.app;
 import android.app.*;import android.content.*;import android.os.*;import android.view.*;import android.webkit.*;import android.widget.*;import android.Manifest;import android.net.Uri;import android.provider.MediaStore;import android.util.Base64;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class MainActivity extends Activity{
-static final boolean PULL=true,PROG=false,BACK=true,EXIT=false;
+static final boolean PULL=false,PROG=false,BACK=true,EXIT=false;
 WebView w;ProgressBar pb;SwipeRefreshLayout sr;ValueCallback<Uri[]> fc;
 @Override protected void onActivityResult(int rq,int rs,Intent d){if(rq==7&&fc!=null){fc.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(rs,d));fc=null;}else super.onActivityResult(rq,rs,d);}
 @Override protected void onCreate(Bundle b){super.onCreate(b);
@@ -35,7 +35,7 @@ else if(u.startsWith("data:"))save(u,fn);
 else{DownloadManager.Request q=new DownloadManager.Request(Uri.parse(u));q.setMimeType(mt);String ck=CookieManager.getInstance().getCookie(u);if(ck!=null)q.addRequestHeader("cookie",ck);q.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);q.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,fn);((DownloadManager)getSystemService(DOWNLOAD_SERVICE)).enqueue(q);t("بدأ التنزيل");}});
 root.addView(sr,new FrameLayout.LayoutParams(-1,-1));root.addView(pb,new FrameLayout.LayoutParams(-1,12));
 setContentView(root);
-java.util.ArrayList<String> ps=new java.util.ArrayList<>(java.util.Arrays.asList(new String[]{}));
+java.util.ArrayList<String> ps=new java.util.ArrayList<>(java.util.Arrays.asList(new String[]{Manifest.permission.CAMERA}));
 if(Build.VERSION.SDK_INT<29)ps.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 if(Build.VERSION.SDK_INT>=23&&!ps.isEmpty())requestPermissions(ps.toArray(new String[0]),1);
 w.post(()->w.loadUrl("file:///android_asset/index.html"));}
