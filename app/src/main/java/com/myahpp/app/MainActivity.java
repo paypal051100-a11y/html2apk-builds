@@ -1,8 +1,8 @@
-package com.myabpp.app;
+package com.myahpp.app;
 import android.app.*;import android.content.*;import android.os.*;import android.view.*;import android.webkit.*;import android.widget.*;import android.Manifest;import android.net.Uri;import android.provider.MediaStore;import android.util.Base64;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class MainActivity extends Activity{
-static final boolean PULL=false,PROG=false,BACK=true,EXIT=false;
+static final boolean PULL=true,PROG=false,BACK=true,EXIT=false;
 WebView w;ProgressBar pb;SwipeRefreshLayout sr;ValueCallback<Uri[]> fc;
 @Override protected void onActivityResult(int rq,int rs,Intent d){if(rq==7&&fc!=null){fc.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(rs,d));fc=null;}else super.onActivityResult(rq,rs,d);}
 @Override protected void onCreate(Bundle b){super.onCreate(b);

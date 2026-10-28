@@ -158,12 +158,21 @@ function showImg(url){
  o.querySelector('button').onclick=function(){o.remove()};document.body.appendChild(o)}
 document.getElementById('share').onclick=function(){
  if(!rows.some(hasNums)){alert('ما في أرقام للمشاركة');return}
- var c=buildImage();
- c.toBlob(function(b){
-  var f=null;try{f=new File([b],'tawzi3.png',{type:'image/png'})}catch(e){}
-  if(f&&navigator.canShare&&navigator.canShare({files:[f]})){
-   navigator.share({files:[f],title:'توزيع المحلات'}).catch(function(){})}
-  else showImg(c.toDataURL('image/png'))},'image/png')};
+ var c=buildImage(),url=c.toDataURL('image/png');
+ var C=window.Capacitor,P=C&&C.Plugins;
+ if(P&&P.Share&&P.Filesystem){
+  P.Filesystem.writeFile({path:'tawzi3.png',data:url.split(',')[1],directory:'CACHE'})
+   .then(function(r){return P.Share.share({title:'توزيع المحلات',url:r.uri})})
+   .catch(function(){showImg(url)});return}
+ var f=null;
+ try{var bs=atob(url.split(',')[1]),u=new Uint8Array(bs.length);
+  for(var i=0;i<bs.length;i++)u[i]=bs.charCodeAt(i);
+  f=new File([u],'tawzi3.png',{type:'image/png'})}catch(e){}
+ if(f&&navigator.share){
+  try{navigator.share({files:[f],title:'توزيع المحلات'})
+   .catch(function(e){if(!e||e.name!=='AbortError')showImg(url)})}
+  catch(e){showImg(url)}}
+ else showImg(url)};
 document.getElementById('clearNums').onclick=function(){
  if(!confirm('مسح الأرقام فقط وإبقاء أسماء المحلات؟'))return;
  rows.forEach(function(r){r.gas='';r.paid=''});save();
