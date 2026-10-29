@@ -1,4 +1,4 @@
-package com.hmyapp.app;
+package com.myapjhp.app;
 import android.app.*;import android.content.*;import android.os.*;import android.view.*;import android.webkit.*;import android.widget.*;import android.Manifest;import android.net.Uri;import android.provider.MediaStore;import android.util.Base64;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class MainActivity extends Activity{
@@ -35,7 +35,7 @@ else if(u.startsWith("data:"))save(u,fn);
 else{DownloadManager.Request q=new DownloadManager.Request(Uri.parse(u));q.setMimeType(mt);String ck=CookieManager.getInstance().getCookie(u);if(ck!=null)q.addRequestHeader("cookie",ck);q.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);q.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,fn);((DownloadManager)getSystemService(DOWNLOAD_SERVICE)).enqueue(q);t("بدأ التنزيل");}});
 root.addView(sr,new FrameLayout.LayoutParams(-1,-1));root.addView(pb,new FrameLayout.LayoutParams(-1,12));
 setContentView(root);
-java.util.ArrayList<String> ps=new java.util.ArrayList<>(java.util.Arrays.asList(new String[]{Manifest.permission.CAMERA}));
+java.util.ArrayList<String> ps=new java.util.ArrayList<>(java.util.Arrays.asList(new String[]{}));
 if(Build.VERSION.SDK_INT<29)ps.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 if(Build.VERSION.SDK_INT>=23&&!ps.isEmpty())requestPermissions(ps.toArray(new String[0]),1);
 w.post(()->w.loadUrl("file:///android_asset/index.html"));}
